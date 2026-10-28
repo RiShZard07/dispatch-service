@@ -1,0 +1,8 @@
+fastapi>=0.110,<1
+uvicorn>=0.27,<1
+sqlalchemy>=2.0,<3
+httpx>=0.27,<1
+pytest>=8,<10
+boto3>=1.34,<2
+# test dependency only: in-memory S3 mock used by tests/test_export.py
+moto[s3]>=5,<6

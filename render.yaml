@@ -1,0 +1,21 @@
+# Render Blueprint for dispatch-service. In the Render dashboard: New + -> Blueprint,
+# pick the repository that holds this file, review the one service it declares, Apply.
+# Render builds the Dockerfile, sets PORT, and probes /health before routing traffic.
+#
+# The free plan has no persistent disk: the SQLite file under /tmp is wiped on every
+# redeploy, restart or spin-down (free services spin down after 15 idle minutes), so the
+# demo database starts empty again. All data in it is synthetic anyway.
+services:
+  - type: web
+    name: dispatch-service
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health
+    envVars:
+      - key: DISPATCH_DATABASE_URL
+        value: sqlite:////tmp/dispatch.sqlite
+      - key: DISPATCH_CORS_ORIGINS
+        value: ""
+      - key: DISPATCH_WEBHOOK_URL
+        value: ""

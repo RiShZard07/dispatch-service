@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+.pytest_cache/
+.ruff_cache/
+.venv/
+.git/
+output/
