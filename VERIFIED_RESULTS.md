@@ -297,13 +297,19 @@ where the image is verified. Until that has happened, treat the Dockerfile as un
 
 ## Render
 
-Not run. `render.yaml` was written against Render's published Blueprint reference (service
-`type`, `runtime: docker`, `plan: free`, `healthCheckPath`, `envVars`) and the free-plan
-facts in the README (no persistent disk, filesystem reset on redeploy or restart, spin-down
-after 15 idle minutes, 750 free hours a month, `PORT` set by the platform) come from Render's
-documentation as read on the day this was written. No Render account was used, nothing was
-deployed, and the blueprint has not been parsed by Render. The static test checks the file
-says what the README says it says, nothing more.
+Deployed on 2026-10-28 from this repository's `render.yaml` through the Render dashboard
+(New + -> Blueprint -> RiShZard07/dispatch-service -> Deploy Blueprint), with no edits to
+the file. Observed in the dashboard: the sync created one Docker web service on the free
+plan in region Oregon, the build and deploy took 1 minute 11 seconds, and the service went
+Live after the `/health` probe. Checked from a browser right after:
+`https://dispatch-service-d7gk.onrender.com/health` returned
+`{"status":"ok","database":"ok"}` and `/docs` rendered the OpenAPI UI with every route.
+
+The free-plan facts in the README (no persistent disk, filesystem reset on redeploy or
+restart, spin-down after 15 idle minutes, 750 free hours a month, `PORT` set by the
+platform) come from Render's documentation; the dashboard showed the spin-down notice on
+the service page. Nothing here was load-tested on Render; the latency numbers above are
+local.
 
 ## PostgreSQL
 

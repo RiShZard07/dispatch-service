@@ -16,13 +16,15 @@ anywhere in this repository, its tests or its scripts.
 
 ## Status
 
-This is an AI-assisted educational prototype built with Claude Code. It has never been
-deployed and has no users. The SQLite path is what the test suite and the load numbers cover.
+This is an AI-assisted educational prototype built with Claude Code. It runs as a free-tier
+demo on Render at https://dispatch-service-d7gk.onrender.com (synthetic data only, no users;
+the instance sleeps after 15 idle minutes, so the first request after a pause takes up to a
+minute). The SQLite path is what the test suite and the load numbers cover.
 The PostgreSQL path exists in the DDL and the locking code but has not been run. The S3
 export has only been exercised against moto's in-memory mock, never a live bucket. The Docker
 image is built by CI; it was not built on the machine where VERIFIED_RESULTS.md was written.
-The Render blueprint (`render.yaml`) was written against Render's published documentation and
-has not been applied to a Render account. The webhook worker has only ever posted to the
+The Render blueprint (`render.yaml`) was applied on 2026-10-28; the first build and health
+check passed without changes to the file. The webhook worker has only ever posted to the
 receiver script in this repository, on the same machine. Treat every number in this repository
 as "measured once on one laptop-class machine".
 
@@ -545,8 +547,9 @@ API.
 - No real time: timestamps come from the server clock, and the S3 export's "day" is UTC.
 - Load numbers are local single-process measurements, published only so the method is
   reproducible, not as a capacity claim.
-- PostgreSQL, real S3 and Render are supported in the code and the blueprint but have not
-  been run.
+- PostgreSQL and real S3 are supported in the code but have not been run. The Render
+  deployment is a free instance with no persistent disk: its database is reset whenever it
+  restarts or spins down.
 
 ## Deploying to Render
 
@@ -581,10 +584,12 @@ A paid instance with a persistent disk mounted at `/srv/data` (and `DISPATCH_DAT
 pointed there) would keep the data; PostgreSQL on Render would be the real answer, and the
 code is written for it but has not been run against it.
 
-This blueprint has not been applied to a Render account. The keys in it (`type`, `runtime:
-docker`, `plan: free`, `healthCheckPath`, `envVars`) follow Render's published Blueprint
-reference, and the Dockerfile binds `0.0.0.0:$PORT` as Render requires, but the first real
-deployment is where that gets verified.
+The blueprint was applied to a Render workspace on 2026-10-28 (New + -> Blueprint -> this
+repository -> Deploy Blueprint). Render parsed the file as written, built the Dockerfile in
+about 1 minute 10 seconds, passed the `/health` check, and published the service at
+https://dispatch-service-d7gk.onrender.com; `GET /health` there returns
+`{"status":"ok","database":"ok"}` and `/docs` serves the OpenAPI UI. Every push to `main`
+redeploys it.
 
 ## Reproduce and explain before using on a resume
 
@@ -609,7 +614,7 @@ A reasonable bar:
    assignment, a server-sent event feed with resumable delivery, and a transactional outbox
    with retried webhooks, verified with concurrency and integration tests" is defensible. Any
    throughput figure is not, unless you also say where and how it was measured, and "deployed
-   on Render" is not until it has been.
+   on Render" means a free-tier demo instance with synthetic data, nothing more.
 
 ## Layout
 
